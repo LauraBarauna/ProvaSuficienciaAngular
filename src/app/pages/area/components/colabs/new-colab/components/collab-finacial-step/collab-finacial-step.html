@@ -1,0 +1,16 @@
+<div class="border-t border-(--color-border) border-dashed pt-8 flex flex-col gap-5" [formGroup]="form">
+  <h2 class="flex items-center gap-2 text-xs font-bold text-(--color-text-secondary) uppercase tracking-wider">
+    <i class="pi pi-money-bill text-(--color-primary)"></i>
+    Contratação
+  </h2>
+
+  <div class="field-container mt-3">
+    <p-floatlabel class="w-full">
+      <p-inputnumber id="salary" formControlName="salary" mode="currency" currency="BRL" locale="pt-BR" class="w-full"/>
+      <label for="salary">Salário Mensal (R$) *</label>
+    </p-floatlabel>
+    @if (form.get('salary')?.invalid && form.get('salary')?.touched) {
+    <p-message severity="error" variant="simple" size="small" class="mt-2 block">Salário é obrigatório.</p-message>
+    }
+  </div>
+</div>

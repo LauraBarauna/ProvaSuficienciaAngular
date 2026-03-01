@@ -1,0 +1,32 @@
+<div class="flex flex-col gap-5">
+  <h2 class="flex items-center gap-2 text-xs font-bold text-(--color-text-secondary) uppercase tracking-wider">
+    <i class="pi pi-id-card text-(--color-primary)"></i>
+    Informações Pessoais
+  </h2>
+
+  <form class="grid grid-cols-1 gap-5" [formGroup]="form">
+
+    <div class="field-container mt-3">
+      <p-floatlabel class="w-full">
+        <input id="name" pInputText class="w-full" formControlName="name" />
+        <label for="name">Nome Completo *</label>
+      </p-floatlabel>
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+      <p-message severity="error" variant="simple" size="small" class="mt-2 block">Nome é obrigatório.</p-message>
+      }
+    </div>
+
+    <div class="field-container mt-3">
+      <p-floatlabel class="w-full">
+        <p-inputnumber id="age" formControlName="age" [min]="14" [max]="100" />
+        <label for="age">Idade *</label>
+
+      </p-floatlabel>
+      @if (form.get('age')?.invalid && form.get('age')?.touched) {
+      <p-message severity="error" variant="simple" size="small" class="mt-2 block">Idade é obrigatório.</p-message>
+      }
+    </div>
+
+
+  </form>
+</div>

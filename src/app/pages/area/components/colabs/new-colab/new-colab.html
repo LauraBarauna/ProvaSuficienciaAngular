@@ -1,0 +1,28 @@
+<div class="flex items-center justify-center mt-4 bg-(--color-bg) p-4">
+  <div class="w-full max-w-xl bg-(--color-surface) rounded-2xl shadow-lg border border-(--color-border) overflow-hidden">
+
+    <div class="bg-(--color-surface-ground) px-8 py-8 border-b border-(--color-border) flex items-center gap-4">
+      <div class="w-12 h-12 bg-(--color-primary)/10 rounded-full flex items-center justify-center text-(--color-primary)">
+        <i class="pi pi-user-plus text-xl"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-(--color-text-primary)">Novo Colaborador</h1>
+        <p class="text-sm text-(--color-text-secondary)">Cadastre um novo membro na sua equipe.</p>
+      </div>
+    </div>
+
+    <div class="p-8">
+      <p-toast></p-toast>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-8">
+
+        <app-collab-personal-step [form]="form"></app-collab-personal-step>
+
+        <app-collab-finacial-step [form]="form"></app-collab-finacial-step>
+
+        <div class="mt-4 flex gap-3">
+          <button pButton fluid severity="primary" type="submit" label="Salvar Colaborador" class="w-full rounded-xl shadow-md"></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
