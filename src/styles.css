@@ -8,6 +8,12 @@ body {
   color: var(--color-text-primary);
 }
 
+html, body {
+  height: 100vh;
+  margin: 0;
+  overflow: hidden; /* Remove o scroll da página inteira */
+}
+
 :root {
   /* ===== BACKGROUNDS ===== */
   --color-bg: #F8FAFC;
