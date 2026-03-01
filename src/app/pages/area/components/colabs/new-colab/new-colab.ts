@@ -6,6 +6,8 @@ import { ButtonModule } from 'primeng/button';
 
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api'
+import { Collab } from '../../../../../core/model/collab.modal';
+import { CollabService } from '../../../../../core/service/collab.service';
 
 @Component({
   selector: 'app-new-colab',
@@ -25,7 +27,8 @@ export class NewColab {
   private messageService = inject(MessageService);
 
   constructor(
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private collabService: CollabService) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       age: [null, Validators.required],
@@ -42,8 +45,21 @@ export class NewColab {
       return;
     }
 
-    this.messageService.add({ severity: 'success', summary: 'Erro', detail: 'Colaborador cadastrado.', life: 3000 });
     const formValues = this.form.value;
+
+    const body: Collab = {
+      name: formValues.name,
+      age: formValues.age,
+      salary: formValues.salary
+    }
+
+    this.collabService.createCollab(body)
+      .subscribe({
+        next: (res) => {
+          this.messageService.add({ severity: 'success', summary: 'Erro', detail: 'Colaborador cadastrado.', life: 3000 });
+        },
+        error: (err) => console.error("Erro ao criar collab: ", err)
+      })
 
   }
 }
