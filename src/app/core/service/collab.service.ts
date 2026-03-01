@@ -20,4 +20,8 @@ export class CollabService {
     return this.http.get<Collab[]>(`${this.API_URL}`);
   }
 
+  public deleteCollab(id: string | undefined) {
+    return this.http.delete(`${this.API_URL}/${id}`);
+  }
+
 }

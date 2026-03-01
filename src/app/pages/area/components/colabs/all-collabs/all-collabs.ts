@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
@@ -7,6 +7,10 @@ import { Collab } from '../../../../../core/model/collab.modal';
 import { CollabService } from '../../../../../core/service/collab.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RouterLink } from "@angular/router";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+
 
 @Component({
   selector: 'app-all-collabs',
@@ -16,12 +20,19 @@ import { RouterLink } from "@angular/router";
     ButtonModule,
     CurrencyPipe,
     MultiSelectModule,
-    RouterLink
-],
+    RouterLink,
+    ConfirmDialogModule,
+    ToastModule
+  ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './all-collabs.html',
   styleUrl: './all-collabs.css',
 })
 export class AllCollabs implements OnInit {
+
+  private confirmationService = inject(ConfirmationService);
+  private messageService = inject(MessageService);
+
   collaborators: Collab[] = [];
   isLoading = true;
   collabsNames: any[] = [];
@@ -29,7 +40,7 @@ export class AllCollabs implements OnInit {
   constructor(
     private collabService: CollabService,
     private crf: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.collabService.getAllCollabs()
@@ -45,7 +56,44 @@ export class AllCollabs implements OnInit {
       })
   }
 
-  deleteCollab(collab: Collab) {}
+  deleteCollab(id: string | undefined, name: string) {
+    this.collabService.deleteCollab(id)
+      .subscribe({
+        next: (res) => {
+          this.messageService.add({ severity: 'success', summary: 'Collab Deletado', detail: `Collab ${name} deletado(a) com sucesso!` });
+          this.ngOnInit();
+        },
+        error: (err) => console.error("Erro ao deletar collab com id ", id, " : ", err)
+      })
+  }
 
-  editCollab(collab: Collab) {}
+
+  confirmDeleteCollab(collab: Collab, event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `Tem certeza que você quer deletar o(a) collab ${collab.name}?`,
+      header: 'Deletar',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancelar',
+      rejectButtonProps: {
+        label: 'Cancelar',
+        severity: 'secondary',
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: 'Deletar',
+        severity: 'danger'
+      },
+
+      accept: () => {
+        this.deleteCollab(collab.id, collab.name);
+      },
+      reject: () => {
+        this.messageService.add({ severity: 'error', summary: 'Ação Cancelada', detail: `Você cancelou a exclusão do(a) collab ${collab.name}` });
+      }
+    });
+    this.crf.detectChanges()
+  }
+
+  editCollab(collab: Collab) { }
 }
