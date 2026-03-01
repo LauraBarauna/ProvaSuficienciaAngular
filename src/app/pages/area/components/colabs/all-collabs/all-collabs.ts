@@ -10,7 +10,10 @@ import { RouterLink } from "@angular/router";
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-all-collabs',
@@ -22,7 +25,11 @@ import { ToastModule } from 'primeng/toast';
     MultiSelectModule,
     RouterLink,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
+    DialogModule,
+    InputTextModule,
+    ReactiveFormsModule,
+    InputNumberModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './all-collabs.html',
@@ -33,14 +40,24 @@ export class AllCollabs implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
 
+  visible = false;
   collaborators: Collab[] = [];
   isLoading = true;
   collabsNames: any[] = [];
+  form: FormGroup;
+  collabId: any;
 
   constructor(
     private collabService: CollabService,
-    private crf: ChangeDetectorRef
-  ) { }
+    private crf: ChangeDetectorRef,
+    private fb: FormBuilder,
+  ) {
+    this.form = this.fb.group({
+      name: [''],
+      age: [null],
+      salary: [null],
+    })
+  }
 
   ngOnInit(): void {
     this.collabService.getAllCollabs()
@@ -95,5 +112,35 @@ export class AllCollabs implements OnInit {
     this.crf.detectChanges()
   }
 
-  editCollab(collab: Collab) { }
+  openEditCollabModal(collab: Collab) {
+    this.visible = true;
+    this.form.patchValue({
+      name: collab.name,
+      age: collab.age,
+      salary: collab.salary
+    });
+    this.collabId = collab.id;
+  }
+
+  editCollab() {
+    const formValues = this.form.value;
+
+    const body: Collab = {
+      id: this.collabId,
+      name: formValues.name,
+      age: formValues.age,
+      salary: formValues.salary
+    };
+
+    this.collabService.editCollab(body)
+      .subscribe({
+        next: (res) => {
+          this.messageService.add({ severity: 'success', summary: 'Collab editado', detail: `Collab ${res.name} editado(a) com sucesso!` });
+          this.visible = false;
+          this.crf.detectChanges();
+          this.ngOnInit();
+        },
+        error: (err) => console.error("Erro ao editar collab: ", err)
+      })
+  }
 }
