@@ -7,7 +7,7 @@ export const routes: Routes = [
     path: 'app',
     component: Area,
     children: [
-      { path: 'colabs/new', component: NewColab }
+      { path: 'collabs/new', component: NewColab }
     ]
   }
 ];
