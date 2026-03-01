@@ -16,4 +16,8 @@ export class CollabService {
     return this.http.post<Collab>(this.API_URL, body);
   }
 
+  public getAllCollabs() {
+    return this.http.get<Collab[]>(`${this.API_URL}`);
+  }
+
 }
